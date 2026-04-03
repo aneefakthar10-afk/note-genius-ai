@@ -7,10 +7,17 @@
 <meta name="keywords" content="AI, note taking, summarization, productivity, study tools">
 <title>NoteGenius AI | Smart Summaries. Instantly.</title>
 
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- 📄 PDF & DOCX Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 
 <style>
 :root {
@@ -38,91 +45,65 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Space Grotesk', sans-serif; font-weight: 
 ::-webkit-scrollbar { width: 10px; }
 ::-webkit-scrollbar-track { background: var(--dark); }
 ::-webkit-scrollbar-thumb { background: var(--gradient-1); border-radius: 5px; }
-#particles-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1; pointer-events: none;
-}
+#particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 nav {
-    position: fixed; top: 0; width: 100%; display: flex;
-    justify-content: space-between; align-items: center;
-    padding: 20px 5%; backdrop-filter: blur(20px);
-    background: rgba(2, 6, 23, 0.7); border-bottom: 1px solid var(--glass-border);
-    z-index: 1000; transition: all 0.3s ease;
+    position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 5%; backdrop-filter: blur(20px); background: rgba(2, 6, 23, 0.7);
+    border-bottom: 1px solid var(--glass-border); z-index: 1000; transition: all 0.3s ease;
 }
 nav.scrolled { padding: 15px 5%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
 .logo {
-    display: flex; align-items: center; gap: 12px; font-size: 28px;
-    font-weight: 800; background: var(--gradient-1);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    cursor: pointer;
+    display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 800;
+    background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer;
 }
-.logo i { font-size: 32px; background: var(--gradient-1);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo i { font-size: 32px; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .nav-links { display: flex; gap: 40px; align-items: center; list-style: none; }
 .nav-links a {
-    color: var(--light); text-decoration: none; font-weight: 500;
-    font-size: 15px; position: relative; transition: color 0.3s ease;
+    color: var(--light); text-decoration: none; font-weight: 500; font-size: 15px;
+    position: relative; transition: color 0.3s ease;
 }
-.nav-links a::after {
-    content: ''; position: absolute; bottom: -5px; left: 0;
-    width: 0; height: 2px; background: var(--gradient-1);
-    transition: width 0.3s ease;
-}
+.nav-links a::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 0; height: 2px; background: var(--gradient-1); transition: width 0.3s ease; }
 .nav-links a:hover::after { width: 100%; }
 .nav-links a:hover { color: var(--primary); }
 .nav-buttons { display: flex; gap: 15px; align-items: center; }
 .theme-toggle {
-    background: var(--glass); border: 1px solid var(--glass-border);
-    color: var(--light); width: 45px; height: 45px; border-radius: 50%;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    font-size: 18px; transition: all 0.3s ease;
+    background: var(--glass); border: 1px solid var(--glass-border); color: var(--light);
+    width: 45px; height: 45px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; transition: all 0.3s ease;
 }
 .theme-toggle:hover { transform: rotate(180deg); background: var(--gradient-1); }
 .btn {
-    padding: 12px 28px; border-radius: 12px; font-weight: 600;
-    font-size: 15px; cursor: pointer; transition: all 0.3s ease;
-    border: none; text-decoration: none; display: inline-flex;
-    align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 12px; font-weight: 600; font-size: 15px;
+    cursor: pointer; transition: all 0.3s ease; border: none; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
 }
-.btn-primary {
-    background: var(--gradient-1); color: white;
-    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
-}
+.btn-primary { background: var(--gradient-1); color: white; box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3); }
 .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(56, 189, 248, 0.4); }
-.btn-secondary {
-    background: var(--glass); color: var(--light);
-    border: 1px solid var(--glass-border); backdrop-filter: blur(10px);
-}
+.btn-secondary { background: var(--glass); color: var(--light); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); }
 .btn-secondary:hover { background: var(--gradient-1); transform: translateY(-3px); }
 .btn-large { padding: 16px 40px; font-size: 16px; }
-.btn-icon { width: 45px; height: 45px; padding: 0; justify-content: center; border-radius: 10px; }
 .mobile-menu-btn { display: none; background: none; border: none; color: var(--light); font-size: 24px; cursor: pointer; }
 .hero {
     min-height: 100vh; display: flex; align-items: center; justify-content: center;
     padding: 150px 5% 100px; position: relative; overflow: hidden;
 }
 .hero::before {
-    content: ''; position: absolute; top: -50%; right: -20%;
-    width: 800px; height: 800px;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
-    animation: pulse 8s ease-in-out infinite;
+    content: ''; position: absolute; top: -50%; right: -20%; width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%); animation: pulse 8s ease-in-out infinite;
 }
 .hero::after {
-    content: ''; position: absolute; bottom: -30%; left: -10%;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(192, 132, 252, 0.1) 0%, transparent 70%);
-    animation: pulse 10s ease-in-out infinite reverse;
+    content: ''; position: absolute; bottom: -30%; left: -10%; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(192, 132, 252, 0.1) 0%, transparent 70%); animation: pulse 10s ease-in-out infinite reverse;
 }
 @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.8; } }
 .hero-content {
-    max-width: 1200px; display: grid; grid-template-columns: 1fr 1fr;
-    gap: 80px; align-items: center; position: relative; z-index: 1;
+    max-width: 1200px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center; position: relative; z-index: 1;
 }
 .hero-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--glass); border: 1px solid var(--glass-border);
-    padding: 8px 20px; border-radius: 50px; font-size: 14px;
-    font-weight: 500; margin-bottom: 30px; animation: fadeInUp 0.8s ease;
+    display: inline-flex; align-items: center; gap: 8px; background: var(--glass);
+    border: 1px solid var(--glass-border); padding: 8px 20px; border-radius: 50px;
+    font-size: 14px; font-weight: 500; margin-bottom: 30px; animation: fadeInUp 0.8s ease;
 }
 .hero-badge i { color: var(--primary); }
 .hero h1 { font-size: 72px; line-height: 1.1; margin-bottom: 25px; animation: fadeInUp 0.8s ease 0.1s backwards; }
@@ -131,20 +112,11 @@ nav.scrolled { padding: 15px 5%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
 .hero-buttons { display: flex; gap: 20px; margin-bottom: 50px; animation: fadeInUp 0.8s ease 0.3s backwards; }
 .hero-stats { display: flex; gap: 50px; animation: fadeInUp 0.8s ease 0.4s backwards; }
 .stat-item { display: flex; flex-direction: column; }
-.stat-number {
-    font-size: 42px; font-weight: 800; background: var(--gradient-1);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
+.stat-number { font-size: 42px; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .stat-label { font-size: 14px; color: var(--gray); }
 .hero-image { position: relative; animation: fadeInUp 0.8s ease 0.5s backwards; }
-.hero-image-wrapper {
-    position: relative; border-radius: 24px; overflow: hidden;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-}
-.hero-image-wrapper::before {
-    content: ''; position: absolute; inset: 0;
-    background: var(--gradient-1); opacity: 0.1; z-index: 1;
-}
+.hero-image-wrapper { position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4); }
+.hero-image-wrapper::before { content: ''; position: absolute; inset: 0; background: var(--gradient-1); opacity: 0.1; z-index: 1; }
 .hero-image img { width: 100%; height: auto; display: block; border-radius: 24px; }
 .floating-card {
     position: absolute; background: var(--glass); backdrop-filter: blur(20px);
@@ -161,9 +133,9 @@ nav.scrolled { padding: 15px 5%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
 .demo-section { padding: 100px 5%; position: relative; }
 .section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
 .section-tag {
-    display: inline-block; background: var(--gradient-1);
-    padding: 6px 20px; border-radius: 50px; font-size: 13px;
-    font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;
+    display: inline-block; background: var(--gradient-1); padding: 6px 20px;
+    border-radius: 50px; font-size: 13px; font-weight: 600; margin-bottom: 15px;
+    text-transform: uppercase; letter-spacing: 1px;
 }
 .section-header h2 { font-size: 48px; margin-bottom: 20px; }
 .section-header p { font-size: 18px; color: var(--gray); }
@@ -174,9 +146,8 @@ nav.scrolled { padding: 15px 5%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
 }
 .demo-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid var(--glass-border); padding-bottom: 20px; }
 .demo-tab {
-    padding: 10px 25px; background: transparent; border: none;
-    color: var(--gray); font-weight: 600; cursor: pointer;
-    border-radius: 10px; transition: all 0.3s ease;
+    padding: 10px 25px; background: transparent; border: none; color: var(--gray);
+    font-weight: 600; cursor: pointer; border-radius: 10px; transition: all 0.3s ease;
 }
 .demo-tab.active { background: var(--gradient-1); color: white; }
 .demo-tab:hover:not(.active) { color: var(--light); background: var(--glass); }
@@ -184,35 +155,30 @@ nav.scrolled { padding: 15px 5%; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); }
 .demo-input-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 15px; }
 .textarea-wrapper { position: relative; }
 textarea {
-    width: 100%; min-height: 180px; background: var(--darker);
-    border: 2px solid var(--glass-border); border-radius: 16px;
-    padding: 20px; color: var(--light); font-family: 'Inter', sans-serif;
+    width: 100%; min-height: 180px; background: var(--darker); border: 2px solid var(--glass-border);
+    border-radius: 16px; padding: 20px; color: var(--light); font-family: 'Inter', sans-serif;
     font-size: 15px; resize: vertical; transition: all 0.3s ease;
 }
 textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1); }
 textarea::placeholder { color: var(--gray); }
 .voice-btn {
-    position: absolute; bottom: 15px; right: 15px;
-    background: var(--gradient-1); border: none;
-    width: 45px; height: 45px; border-radius: 10px;
-    color: white; cursor: pointer; transition: all 0.3s ease;
-    display: flex; align-items: center; justify-content: center;
+    position: absolute; bottom: 15px; right: 15px; background: var(--gradient-1); border: none;
+    width: 45px; height: 45px; border-radius: 10px; color: white; cursor: pointer;
+    transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
 }
 .voice-btn:hover { transform: scale(1.1); box-shadow: 0 5px 20px rgba(56, 189, 248, 0.4); }
 .voice-btn.listening { animation: pulse 1.5s ease-in-out infinite; background: var(--danger); }
 .upload-btn {
-    background: var(--glass); border: 1px solid var(--glass-border);
-    color: var(--light); padding: 10px 18px; border-radius: 10px;
-    cursor: pointer; font-size: 14px; transition: all 0.3s ease;
-    display: inline-flex; align-items: center; gap: 8px; font-weight: 500;
+    background: var(--glass); border: 1px solid var(--glass-border); color: var(--light);
+    padding: 10px 18px; border-radius: 10px; cursor: pointer; font-size: 14px;
+    transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; font-weight: 500;
 }
 .upload-btn:hover { background: var(--gradient-2); border-color: transparent; transform: translateY(-2px); }
-.upload-btn.dragover { background: var(--gradient-1); border-color: transparent; }
 .demo-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
 .option-card {
-    background: var(--darker); border: 2px solid var(--glass-border);
-    border-radius: 12px; padding: 20px; cursor: pointer;
-    transition: all 0.3s ease; display: flex; align-items: center; gap: 12px;
+    background: var(--darker); border: 2px solid var(--glass-border); border-radius: 12px;
+    padding: 20px; cursor: pointer; transition: all 0.3s ease;
+    display: flex; align-items: center; gap: 12px;
 }
 .option-card:hover, .option-card.selected { border-color: var(--primary); background: rgba(56, 189, 248, 0.05); }
 .option-card i { font-size: 24px; color: var(--primary); }
@@ -220,33 +186,18 @@ textarea::placeholder { color: var(--gray); }
 .option-card p { font-size: 12px; color: var(--gray); }
 .demo-actions { display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
 .demo-actions .btn { flex: 1; min-width: 150px; justify-content: center; }
-
-/* Enhanced Loading Spinner */
 .loading-wrapper {
-    display: none; align-items: center; justify-content: center;
-    gap: 15px; padding: 20px;
+    display: none; align-items: center; justify-content: center; gap: 15px; padding: 20px;
 }
 .loading-wrapper.show { display: flex; }
 .spinner {
     width: 50px; height: 50px; border: 4px solid var(--glass-border);
-    border-top-color: var(--primary); border-radius: 50%;
-    animation: spin 1s linear infinite;
+    border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-text {
-    font-size: 16px; color: var(--gray);
-    animation: pulse 1.5s ease-in-out infinite;
-}
-.loading-dots::after {
-    content: ''; animation: dots 1.5s steps(4, end) infinite;
-}
-@keyframes dots {
-    0%, 20% { content: ''; }
-    40% { content: '.'; }
-    60% { content: '..'; }
-    80%, 100% { content: '...'; }
-}
-
+.loading-text { font-size: 16px; color: var(--gray); animation: pulse 1.5s ease-in-out infinite; }
+.loading-dots::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
+@keyframes dots { 0%, 20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%, 100% { content: '...'; } }
 .demo-output {
     margin-top: 30px; padding: 30px; background: var(--darker);
     border-radius: 16px; border: 2px solid var(--glass-border); display: none;
@@ -254,42 +205,31 @@ textarea::placeholder { color: var(--gray); }
 .demo-output.show { display: block; animation: fadeIn 0.5s ease; }
 .demo-output-header {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border);
-    flex-wrap: wrap; gap: 10px;
+    margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--glass-border); flex-wrap: wrap; gap: 10px;
 }
 .demo-output-header h3 { display: flex; align-items: center; gap: 10px; }
 .demo-output-header h3 i { color: var(--success); }
 .demo-output-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .copy-btn {
-    background: var(--glass); border: 1px solid var(--glass-border);
-    color: var(--light); padding: 8px 16px; border-radius: 8px;
-    cursor: pointer; font-size: 13px; transition: all 0.3s ease;
-    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--glass); border: 1px solid var(--glass-border); color: var(--light);
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px;
+    transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px;
 }
 .copy-btn:hover { background: var(--gradient-1); }
 .copy-btn.save { background: var(--gradient-1); border: none; }
 .copy-btn.export { background: var(--gradient-2); border: none; }
-
-/* ChatGPT-style Typing Animation */
 .output-content {
     line-height: 1.8; color: var(--light); white-space: pre-wrap;
-    background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px;
-    min-height: 50px; position: relative;
+    background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; min-height: 50px; position: relative;
 }
-.typing-cursor::after {
-    content: '|'; animation: blink 1s step-end infinite;
-    color: var(--primary); margin-left: 2px;
-}
+.typing-cursor::after { content: '|'; animation: blink 1s step-end infinite; color: var(--primary); margin-left: 2px; }
 @keyframes blink { 50% { opacity: 0; } }
-
 .output-meta {
     display: flex; gap: 30px; margin-top: 20px; padding-top: 20px;
     border-top: 1px solid var(--glass-border); flex-wrap: wrap;
 }
 .meta-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--gray); }
 .meta-item i { color: var(--primary); }
-
-/* ENHANCED CTA SECTION */
 .cta-section {
     padding: 150px 5%; position: relative; overflow: hidden;
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(129, 140, 248, 0.1) 100%);
@@ -298,13 +238,11 @@ textarea::placeholder { color: var(--gray); }
     max-width: 1000px; margin: 0 auto;
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(129, 140, 248, 0.2) 100%);
     border-radius: 32px; padding: 100px 60px; text-align: center;
-    position: relative; overflow: hidden; border: 1px solid var(--glass-border);
-    backdrop-filter: blur(20px);
+    position: relative; overflow: hidden; border: 1px solid var(--glass-border); backdrop-filter: blur(20px);
 }
 .cta-container::before {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-    animation: rotate 20s linear infinite;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%); animation: rotate 20s linear infinite;
 }
 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .cta-content { position: relative; z-index: 1; }
@@ -323,8 +261,6 @@ textarea::placeholder { color: var(--gray); }
 .cta-buttons .btn-primary { background: white; color: var(--primary); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); }
 .cta-buttons .btn-secondary { background: transparent; border: 2px solid white; color: white; }
 .cta-buttons .btn:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3); }
-
-/* ENHANCED FAQ SECTION */
 .faq-section { padding: 120px 5%; background: var(--dark); position: relative; }
 .faq-section::before {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -352,7 +288,6 @@ textarea::placeholder { color: var(--gray); }
     padding: 0 35px; color: var(--gray); line-height: 1.8; font-size: 16px;
 }
 .faq-item.active .faq-answer { padding: 0 35px 30px 35px; max-height: 500px; }
-
 .saved-notes-panel {
     position: fixed; right: -420px; top: 0; width: 400px; height: 100vh;
     background: var(--dark); border-left: 1px solid var(--glass-border);
@@ -392,10 +327,7 @@ textarea::placeholder { color: var(--gray); }
     background: rgba(0,0,0,0.6); z-index: 1999; display: none; backdrop-filter: blur(4px);
 }
 .overlay.show { display: block; animation: fadeIn 0.3s ease; }
-.toast-container {
-    position: fixed; bottom: 30px; right: 30px; z-index: 3000;
-    display: flex; flex-direction: column; gap: 10px;
-}
+.toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
 .toast {
     background: var(--gradient-1); color: white; padding: 14px 24px;
     border-radius: 12px; font-weight: 600; display: flex;
@@ -407,10 +339,7 @@ textarea::placeholder { color: var(--gray); }
 @keyframes toastIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100px); opacity: 0; } }
 .features-section { padding: 100px 5%; position: relative; }
-.features-grid {
-    max-width: 1200px; margin: 0 auto; display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
-}
+.features-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
 .feature-card {
     background: var(--glass); backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-radius: 24px;
@@ -418,8 +347,7 @@ textarea::placeholder { color: var(--gray); }
 }
 .feature-card::before {
     content: ''; position: absolute; top: 0; left: 0; width: 100%;
-    height: 4px; background: var(--gradient-1); transform: scaleX(0);
-    transition: transform 0.4s ease;
+    height: 4px; background: var(--gradient-1); transform: scaleX(0); transition: transform 0.4s ease;
 }
 .feature-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3); border-color: var(--primary); }
 .feature-card:hover::before { transform: scaleX(1); }
@@ -428,25 +356,16 @@ textarea::placeholder { color: var(--gray); }
     border-radius: 20px; display: flex; align-items: center;
     justify-content: center; font-size: 32px; margin-bottom: 25px; position: relative;
 }
-.feature-icon::after {
-    content: ''; position: absolute; inset: -5px; background: var(--gradient-1);
-    border-radius: 20px; opacity: 0.3; filter: blur(10px);
-}
+.feature-icon::after { content: ''; position: absolute; inset: -5px; background: var(--gradient-1); border-radius: 20px; opacity: 0.3; filter: blur(10px); }
 .feature-card h3 { font-size: 24px; margin-bottom: 15px; }
 .feature-card p { color: var(--gray); line-height: 1.7; }
-.feature-link {
-    display: inline-flex; align-items: center; gap: 8px; margin-top: 20px;
-    color: var(--primary); text-decoration: none; font-weight: 600; transition: gap 0.3s ease;
-}
+.feature-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 20px; color: var(--primary); text-decoration: none; font-weight: 600; transition: gap 0.3s ease; }
 .feature-link:hover { gap: 15px; }
-.how-section {
-    padding: 100px 5%;
-    background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.03) 50%, transparent 100%);
-}
+.how-section { padding: 100px 5%; background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.03) 50%, transparent 100%); }
 .steps-container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
 .step {
-    display: grid; grid-template-columns: 80px 1fr; gap: 30px;
-    align-items: center; background: var(--glass); backdrop-filter: blur(20px);
+    display: grid; grid-template-columns: 80px 1fr; gap: 30px; align-items: center;
+    background: var(--glass); backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; transition: all 0.4s ease;
 }
 .step:hover { transform: translateX(10px); border-color: var(--primary); }
@@ -455,17 +374,11 @@ textarea::placeholder { color: var(--gray); }
     border-radius: 50%; display: flex; align-items: center;
     justify-content: center; font-size: 32px; font-weight: 800; position: relative;
 }
-.step-number::after {
-    content: ''; position: absolute; inset: -5px; background: var(--gradient-1);
-    border-radius: 50%; opacity: 0.3; filter: blur(10px);
-}
+.step-number::after { content: ''; position: absolute; inset: -5px; background: var(--gradient-1); border-radius: 50%; opacity: 0.3; filter: blur(10px); }
 .step-content h3 { font-size: 28px; margin-bottom: 10px; }
 .step-content p { color: var(--gray); font-size: 16px; }
 .pricing-section { padding: 100px 5%; }
-.pricing-grid {
-    max-width: 1200px; margin: 0 auto; display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; align-items: start;
-}
+.pricing-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; align-items: start; }
 .pricing-card {
     background: var(--glass); backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px;
@@ -482,26 +395,14 @@ textarea::placeholder { color: var(--gray); }
 }
 .pricing-card h3 { font-size: 28px; margin-bottom: 10px; text-align: center; }
 .pricing-card .price { text-align: center; margin-bottom: 30px; }
-.price-amount {
-    font-size: 64px; font-weight: 800; background: var(--gradient-1);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
+.price-amount { font-size: 64px; font-weight: 800; background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .price-period { color: var(--gray); font-size: 16px; }
 .pricing-features { list-style: none; margin-bottom: 30px; }
-.pricing-features li {
-    padding: 12px 0; border-bottom: 1px solid var(--glass-border);
-    display: flex; align-items: center; gap: 12px;
-}
+.pricing-features li { padding: 12px 0; border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 12px; }
 .pricing-features li i { color: var(--success); }
 .pricing-card .btn { width: 100%; justify-content: center; }
-.testimonials-section {
-    padding: 100px 5%;
-    background: linear-gradient(180deg, transparent 0%, rgba(192, 132, 252, 0.03) 50%, transparent 100%);
-}
-.testimonials-grid {
-    max-width: 1200px; margin: 0 auto; display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;
-}
+.testimonials-section { padding: 100px 5%; background: linear-gradient(180deg, transparent 0%, rgba(192, 132, 252, 0.03) 50%, transparent 100%); }
+.testimonials-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
 .testimonial-card {
     background: var(--glass); backdrop-filter: blur(20px);
     border: 1px solid var(--glass-border); border-radius: 24px; padding: 40px; transition: all 0.4s ease;
@@ -513,13 +414,8 @@ textarea::placeholder { color: var(--gray); }
 .testimonial-info p { color: var(--gray); font-size: 14px; }
 .testimonial-rating { color: #fbbf24; margin-bottom: 15px; }
 .testimonial-text { color: var(--gray); line-height: 1.8; font-style: italic; }
-footer {
-    background: var(--darker); border-top: 1px solid var(--glass-border); padding: 80px 5% 40px;
-}
-.footer-content {
-    max-width: 1200px; margin: 0 auto; display: grid;
-    grid-template-columns: 2fr repeat(3, 1fr); gap: 60px; margin-bottom: 60px;
-}
+footer { background: var(--darker); border-top: 1px solid var(--glass-border); padding: 80px 5% 40px; }
+.footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 60px; margin-bottom: 60px; }
 .footer-brand { max-width: 300px; }
 .footer-brand .logo { margin-bottom: 20px; }
 .footer-brand p { color: var(--gray); line-height: 1.7; margin-bottom: 25px; }
@@ -657,7 +553,7 @@ footer {
     <div class="section-header fade-in">
         <span class="section-tag">Live Demo</span>
         <h2>See It In Action</h2>
-        <p>Experience the power of AI summarization. Paste your text or upload a file.</p>
+        <p>Experience the power of AI summarization. Paste text or upload a document.</p>
     </div>
     <div class="demo-container fade-in">
         <div class="demo-tabs">
@@ -673,12 +569,12 @@ footer {
                     <i class="fas fa-microphone"></i>
                 </button>
             </div>
-            <!-- 📁 FILE UPLOAD FEATURE -->
+            <!-- File Upload -->
             <div style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap; align-items: center;">
                 <label class="upload-btn" for="fileInput" id="uploadLabel">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload File (.txt, .md)
+                    <i class="fas fa-cloud-upload-alt"></i> Upload File (.txt, .md, .pdf, .docx)
                 </label>
-                <input type="file" id="fileInput" accept=".txt,.md,.text" style="display: none;">
+                <input type="file" id="fileInput" accept=".txt,.md,.pdf,.docx,.doc" style="display: none;">
                 <span style="font-size: 12px; color: var(--gray);">or drag & drop anywhere</span>
             </div>
         </div>
@@ -732,7 +628,7 @@ footer {
         <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h3>Instant Summarization</h3><p>Transform lengthy documents into concise summaries in under 2 seconds. Our AI understands context and extracts the most important information.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
         <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-brain"></i></div><h3>Smart Key Extraction</h3><p>Automatically identify and extract key concepts, definitions, and important points from any text or document.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
         <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-microphone"></i></div><h3>Voice Input</h3><p>Speak your notes and let our AI transcribe and summarize them instantly. Hands-free note-taking made easy.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
-        <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div><h3>File Upload</h3><p>Drag & drop or upload .txt and .md files directly. No copy-pasting required. Supports instant content extraction.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
+        <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-cloud-upload-alt"></i></div><h3>File Upload</h3><p>Drag & drop or upload .txt, .md, .pdf, and .docx files directly. Supports instant content extraction.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
         <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-search"></i></div><h3>Smart Search</h3><p>Find any information instantly with AI-powered semantic search. No more scrolling through endless notes.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
         <div class="feature-card fade-in"><div class="feature-icon"><i class="fas fa-file-export"></i></div><h3>Multiple Export Formats</h3><p>Export your summaries as PDF, Word, Markdown, or plain text. Share with classmates or colleagues effortlessly.</p><a href="#" class="feature-link">Learn more <i class="fas fa-arrow-right"></i></a></div>
     </div>
@@ -746,7 +642,7 @@ footer {
         <p>Get started in less than a minute. No complicated setup required.</p>
     </div>
     <div class="steps-container">
-        <div class="step fade-in"><div class="step-number">1</div><div class="step-content"><h3>Paste, Upload, or Speak</h3><p>Simply paste your text, upload a document, or use voice input. We support .txt, .md files and real-time transcription.</p></div></div>
+        <div class="step fade-in"><div class="step-number">1</div><div class="step-content"><h3>Paste, Upload, or Speak</h3><p>Simply paste your text, upload a document, or use voice input. We support .txt, .md, .pdf, .docx files and real-time transcription.</p></div></div>
         <div class="step fade-in"><div class="step-number">2</div><div class="step-content"><h3>Choose Your Preferences</h3><p>Select your preferred summary length, tone, and format. Our AI adapts to your needs whether you want bullet points, paragraphs, or detailed analysis.</p></div></div>
         <div class="step fade-in"><div class="step-number">3</div><div class="step-content"><h3>Get Your AI-Powered Summary</h3><p>Receive your perfectly crafted summary in seconds. Review, edit if needed, and export or share with one click.</p></div></div>
     </div>
@@ -839,7 +735,7 @@ footer {
     </div>
 </section>
 
-<!-- ENHANCED FAQ SECTION -->
+<!-- FAQ Section -->
 <section class="faq-section" id="faq">
     <div class="section-header fade-in">
         <span class="section-tag">FAQ</span>
@@ -880,7 +776,7 @@ footer {
                 <i class="fas fa-chevron-down"></i>
             </div>
             <div class="faq-answer">
-                We support .txt and .md files natively in the browser. For PDF and DOCX support, upgrade to Pro which includes server-side parsing and OCR technology for scanned documents.
+                We support .txt, .md, .pdf, and .docx files natively in the browser. PDF and DOCX files are processed entirely in your browser using advanced parsing libraries. For scanned PDFs, text extraction may be limited.
             </div>
         </div>
         <div class="faq-item">
@@ -895,7 +791,7 @@ footer {
     </div>
 </section>
 
-<!-- ENHANCED CTA SECTION -->
+<!-- CTA Section -->
 <section class="cta-section">
     <div class="cta-container fade-in">
         <div class="cta-content">
@@ -1192,49 +1088,98 @@ function stopListening() {
     showToast('✅ Voice input stopped');
 }
 
-// 📁 FILE UPLOAD FUNCTIONALITY
+// 📁 ENHANCED FILE UPLOAD (PDF + DOCX + TXT + MD)
 document.getElementById('fileInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (file) processFile(file);
 });
 
-function processFile(file) {
-    const validTypes = ['text/plain', 'text/markdown'];
-    const validExtensions = ['.txt', '.md'];
-    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-    
-    if (!validTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
-        showToast('❌ Only .txt and .md files supported in demo mode', 'error');
-        return;
-    }
-    
-    if (file.size > 2 * 1024 * 1024) {
-        showToast('⚠️ File too large. Max 2MB for browser processing.', 'warning');
-        return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const textarea = document.getElementById('inputText');
-        textarea.value = event.target.result;
-        showToast(`📄 "${file.name}" loaded successfully!`);
-        textarea.focus();
-    };
-    reader.onerror = function() {
-        showToast('❌ Error reading file. Please try again.', 'error');
-    };
-    reader.readAsText(file);
-}
-
 // Drag & Drop Support
-const textarea = document.getElementById('inputText');
-const uploadLabel = document.getElementById('uploadLabel');
 document.addEventListener('dragover', (e) => e.preventDefault());
 document.addEventListener('drop', (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) processFile(file);
 });
+
+async function processFile(file) {
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+    const validExtensions = ['.txt', '.md', '.pdf', '.docx', '.doc'];
+    
+    if (!validExtensions.includes(fileExtension)) {
+        showToast('❌ Only .txt, .md, .pdf, and .docx files supported', 'error');
+        return;
+    }
+    
+    const maxSize = fileExtension === '.pdf' || fileExtension === '.docx' ? 5 * 1024 * 1024 : 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+        showToast(`⚠️ File too large. Max ${fileExtension === '.pdf' || fileExtension === '.docx' ? '5MB' : '2MB'}`, 'warning');
+        return;
+    }
+    
+    showToast('⏳ Processing file...');
+    
+    try {
+        let text = '';
+        
+        if (fileExtension === '.txt' || fileExtension === '.md') {
+            text = await readTextFile(file);
+        } else if (fileExtension === '.pdf') {
+            text = await readPDF(file);
+        } else if (fileExtension === '.docx' || fileExtension === '.doc') {
+            text = await readDOCX(file);
+        }
+        
+        const textarea = document.getElementById('inputText');
+        textarea.value = text;
+        showToast(`✅ "${file.name}" loaded successfully!`);
+        textarea.focus();
+        
+    } catch (error) {
+        console.error(error);
+        showToast(`❌ Error reading file: ${error.message}`, 'error');
+    }
+}
+
+function readTextFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = () => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
+    });
+}
+
+async function readPDF(file) {
+    const arrayBuffer = await file.arrayBuffer();
+    // Ensure PDF.js is loaded
+    if (typeof pdfjsLib === 'undefined') {
+        throw new Error("PDF library not loaded. Check internet connection.");
+    }
+    // Initialize worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+    
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        fullText += pageText + '\n';
+    }
+    
+    return fullText.trim();
+}
+
+async function readDOCX(file) {
+    if (typeof mammoth === 'undefined') {
+        throw new Error("DOCX library not loaded. Check internet connection.");
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+}
 
 // FAQ Toggle
 function toggleFaq(element) {
